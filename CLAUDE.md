@@ -167,3 +167,56 @@ Swup 用于 SPA 式的页面过渡体验。在 `astro.config.mjs` 中配置 cont
 - Node.js 版本需 ≥ 22
 - Biome 同时用于格式化和 linting，无 ESLint/Prettier
 - `trailingSlash: "always"` — 所有 URL 以 `/` 结尾
+
+## CI/CD
+
+三个 GitHub Actions 工作流（`.github/workflows/`）：
+
+| 工作流 | 触发条件 | 功能 |
+|--------|----------|------|
+| `build.yml` | push/PR 到 master | `astro check` + `astro build`（Node 22/23 矩阵） |
+| `deploy.yml` | push 到 master | 全量构建后部署到 `pages` 分支（GitHub Pages） |
+| `biome.yml` | push/PR 到 master | Biome CI 检查代码格式 |
+
+`deploy.yml` 使用 `JamesIves/github-pages-deploy-action@v4`，将 `dist/` 推送到 `pages` 分支。注意：**Cloudflare Pages 不要连接 `pages` 分支**（该分支只有构建产物，无源码）。
+
+## 部署
+
+### Cloudflare Workers + Assets
+
+`wrangler.toml` 配置 Workers 静态资源部署：
+
+```toml
+name = "ndl"
+compatibility_date = "2026-06-01"
+[assets]
+directory = "./dist"
+```
+
+Cloudflare git 集成会自动执行 `pnpm build` 后 `npx wrangler deploy`，从 `[assets]` 读取 `dist/` 目录。注意 UI 里不要额外设置 Deploy command。
+
+自定义域名通过 Cloudflare DNS CNAME 指向 `nidonglin.ndl18120531615.workers.dev`。
+
+### 双远程仓库
+
+GitHub（`origin`）和 Gitee（`gitee`）：
+```bash
+git push origin master  # GitHub
+git push gitee master   # Gitee
+```
+
+## 评论系统
+
+当前使用 **Twikoo**，后端部署信息：
+- **Twikoo 服务**：`https://ndl18120531615-twikoo.vercel.app`（Vercel 托管）
+- **数据库**：MongoDB Atlas 免费集群 `cluster0.y6zdg1n.mongodb.net`
+- 配置文件：`src/config/commentConfig.ts`，`type: "twikoo"`
+
+Giscus 因 `giscus.app` 在国内被墙，不可用。
+
+## 开发注意事项
+
+- 修改 `src/config/` 下的配置文件后，**需要重启 dev server** 才能生效（HMR 不覆盖 config 变更）
+- 重启前先清理端口：旧 astro 进程会占用 4321 端口，多次启动会漂移到 4322、4323…
+- `tsx` 已加入 devDependencies，build 脚本 `generate-lqips.ts` 依赖它
+- Bagumi 页面构建时会请求 api.bgm.tv，国内可能超时，可忽略
