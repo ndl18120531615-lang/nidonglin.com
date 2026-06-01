@@ -1,8 +1,10 @@
 name = "ndl"
-compatibility_date = "2026-6-1"
+compatibility_date = "2026-06-01"
 
-[assets]
-directory = "./dist"
+[build]
+command = "pnpm install && pnpm build"
 
-[vars]
+[build.environment]
 NODE_VERSION = "22"
+
+pages_build_output_dir = "dist"
