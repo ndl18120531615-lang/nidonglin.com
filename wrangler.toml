@@ -1,10 +1,9 @@
+# Cloudflare Pages 配置
+# 构建设置请在 Cloudflare Pages 控制台配置：
+#   Build command: pnpm install && pnpm build
+#   Output directory: dist
 name = "ndl"
 compatibility_date = "2026-06-01"
 
-[build]
-command = "pnpm install && pnpm build"
-
-[build.environment]
-NODE_VERSION = "22"
-
+# Pages 静态站点输出目录
 pages_build_output_dir = "dist"
