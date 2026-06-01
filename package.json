@@ -81,7 +81,8 @@
     "@types/sanitize-html": "^2.16.1",
     "postcss-import": "^16.1.1",
     "postcss-nesting": "^13.0.2",
-    "tailwindcss": "^4.3.0"
+    "tailwindcss": "^4.3.0",
+    "tsx": "^4.22.4"
   },
   "packageManager": "pnpm@9.14.4"
 }
