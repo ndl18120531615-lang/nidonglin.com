@@ -39,6 +39,38 @@ const config = {
     };
   }
 
+  // 更新文章访问量统计
+  function updateVisitorCount() {
+    const visitorsEl = document.getElementById("twikoo_visitors");
+    if (!visitorsEl) return;
+
+    if (
+      typeof twikoo === "undefined" ||
+      typeof twikoo.getVisitors !== "function"
+    ) {
+      setTimeout(updateVisitorCount, 500);
+      return;
+    }
+
+    const path = getCurrentPath();
+    twikoo
+      .getVisitors({
+        envId: config.envId,
+        urls: [path],
+        includeReply: false,
+      })
+      .then(function (data) {
+        if (data && data.length > 0) {
+          visitorsEl.textContent = data[0].count ?? 0;
+        } else {
+          visitorsEl.textContent = "0";
+        }
+      })
+      .catch(function (error) {
+        console.error("[Twikoo] 获取访问量失败:", error);
+      });
+  }
+
   // 初始化 Twikoo
   function initTwikoo() {
     if (typeof twikoo !== "undefined") {
@@ -53,6 +85,10 @@ const config = {
           .init(dynamicConfig)
           .then(() => {
             console.log("[Twikoo] 初始化完成");
+            // 根据配置更新访问量统计
+            if (config.visitorCount) {
+              updateVisitorCount();
+            }
           })
           .catch((error) => {
             console.error("[Twikoo] 初始化失败:", error);
@@ -64,23 +100,38 @@ const config = {
     }
   }
 
-  // 页面加载时初始化
-  document.addEventListener("DOMContentLoaded", initTwikoo);
+  // 页面加载时初始化，同时处理访问量统计
+  document.addEventListener("DOMContentLoaded", function () {
+    initTwikoo();
+    // 即使没有评论区，也根据配置更新访问量（如文章详情页）
+    if (
+      config.visitorCount &&
+      !document.getElementById("tcomment") &&
+      document.getElementById("twikoo_visitors")
+    ) {
+      updateVisitorCount();
+    }
+  });
 
   // Swup 页面切换后重新初始化
-  if (window.swup && window.swup.hooks) {
-    window.swup.hooks.on("content:replace", function () {
-      setTimeout(initTwikoo, 200);
-    });
-  } else {
-    document.addEventListener("swup:enable", function () {
-      if (window.swup && window.swup.hooks) {
-        window.swup.hooks.on("content:replace", function () {
-          setTimeout(initTwikoo, 200);
-        });
-      }
-    });
+  function bindSwupHook() {
+    if (window.swup && window.swup.hooks) {
+      window.swup.hooks.on("content:replace", function () {
+        setTimeout(function () {
+          initTwikoo();
+          if (config.visitorCount && document.getElementById("twikoo_visitors")) {
+            setTimeout(updateVisitorCount, 300);
+          }
+        }, 200);
+      });
+    }
   }
+
+  bindSwupHook();
+
+  document.addEventListener("swup:enable", function () {
+    bindSwupHook();
+  });
 
   // 自定义事件监听
   document.addEventListener("firefly:page:loaded", function () {
@@ -88,6 +139,9 @@ const config = {
     if (commentEl) {
       console.log("[Twikoo] 通过自定义事件重新初始化");
       initTwikoo();
+    }
+    if (config.visitorCount && document.getElementById("twikoo_visitors")) {
+      setTimeout(updateVisitorCount, 300);
     }
   });
 </script>
