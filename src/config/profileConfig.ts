@@ -34,6 +34,18 @@ export const profileConfig: ProfileConfig = {
 			showName: false,
 		},
 		{
+			name: "Email",
+			icon: "fa7-solid:envelope",
+			url: "mailto:18120531615@163.com",
+			showName: false,
+		},
+		{
+			name: "QQ",
+			icon: "fa7-brands:qq",
+			url: "https://wpa.qq.com/msgrd?v=3&uin=578269393&site=qq&menu=yes",
+			showName: false,
+		},
+		{
 			name: "RSS",
 			icon: "fa7-solid:rss",
 			url: "/rss/",
