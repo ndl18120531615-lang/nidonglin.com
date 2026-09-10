@@ -21,36 +21,18 @@ export const friendsPageConfig: FriendsPageConfig = {
 };
 
 // 友链配置
-export const friendsConfig: FriendLink[] = [
-	{
-		title: "夏夜流萤",
-		imgurl:
-			"https://weavatar.com/avatar/d252655d40d6874417a720bad0a6c5f77f8f6a1fd2f882f8f338402dc37e4190?s=640",
-		desc: "飞萤之火自无梦的长夜亮起，绽放在终竟的明天。",
-		siteurl: "https://blog.cuteleaf.cn",
-		tags: ["Blog"],
-		weight: 10, // 权重，数字越大排序越靠前
-		enabled: true, // 是否启用
-	},
-	{
-		title: "Firefly Docs",
-		imgurl: "https://docs-firefly.cuteleaf.cn/logo.png",
-		desc: "Firefly主题模板文档",
-		siteurl: "https://docs-firefly.cuteleaf.cn",
-		tags: ["Docs"],
-		weight: 9,
-		enabled: true,
-	},
-	{
-		title: "Astro",
-		imgurl: "https://avatars.githubusercontent.com/u/44914786?v=4&s=640",
-		desc: "The web framework for content-driven websites. ⭐️ Star to support our work!",
-		siteurl: "https://github.com/withastro/astro",
-		tags: ["Framework"],
-		weight: 8,
-		enabled: true,
-	},
-];
+// 模板自带的三条（夏夜流萤 / Firefly Docs / Astro）已移除，它们不是你的友链。
+// 之后加友链按下面格式往数组里填即可：
+// {
+// 	title: "对方的站点名",
+// 	imgurl: "对方头像或 logo 的图片地址",
+// 	desc: "对方站点描述",
+// 	siteurl: "https://对方的域名",
+// 	tags: ["Blog"],
+// 	weight: 10, // 权重，数字越大排序越靠前
+// 	enabled: true, // 是否启用
+// },
+export const friendsConfig: FriendLink[] = [];
 
 // 获取启用的友链并进行排序
 export const getEnabledFriends = (): FriendLink[] => {

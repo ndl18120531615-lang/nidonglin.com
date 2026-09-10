@@ -131,7 +131,10 @@ export const siteConfig: SiteConfig = {
 		// 友链页面开关
 		friends: true,
 		// 赞助页面开关
-		sponsor: true,
+		// 暂时关闭：模板自带的收款码是模板作者（夏叶）的，不是你的。
+		// 替换 public/assets/images/sponsor/ 下的收款码并在 sponsorConfig.ts 中
+		// 把对应 method 的 enabled 改为 true 后，再打开这个开关。
+		sponsor: false,
 		// 留言板页面开关，需要配置评论系统
 		guestbook: true,
 		// 番组计划页面开关，含追番、游戏、书籍和音乐，dev调试时只获取一页数据，build才会获取全部数据
