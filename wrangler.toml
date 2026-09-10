@@ -1,5 +1,6 @@
 name = "ndl"
 compatibility_date = "2026-06-01"
+account_id = "56ee09a4322780bbdf7914bddc86f3a7"
 
 [assets]
 directory = "./dist"

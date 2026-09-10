@@ -20,6 +20,8 @@ pnpm lint                 # Biome 检查并自动修复 ./src
 pnpm new-post <filename>  # 创建新文章
 pnpm icons                # 仅重新生成图标
 pnpm lqips                # 仅重新生成 LQIP（低质量图像占位符）
+npx wrangler login        # Cloudflare 浏览器 OAuth 授权（首次部署前）
+npx wrangler deploy       # 部署 dist/ 到 Cloudflare Workers（构建后执行）
 ```
 
 ## 架构概览
@@ -189,9 +191,12 @@ Swup 用于 SPA 式的页面过渡体验。在 `astro.config.mjs` 中配置 cont
 ```toml
 name = "ndl"
 compatibility_date = "2026-06-01"
+account_id = "56ee09a432..."
 [assets]
 directory = "./dist"
 ```
+
+注意：`account_id` 必须配置，否则 `wrangler deploy` 会报权限错误。从 Cloudflare Dashboard 右侧边栏可找到 Account ID。
 
 Cloudflare git 集成会自动执行 `pnpm build` 后 `npx wrangler deploy`，从 `[assets]` 读取 `dist/` 目录。注意 UI 里不要额外设置 Deploy command。
 
@@ -202,15 +207,21 @@ Cloudflare git 集成会自动执行 `pnpm build` 后 `npx wrangler deploy`，�
 GitHub（`origin`）和 Gitee（`gitee`）：
 ```bash
 git push origin master  # GitHub
-git push gitee master   # Gitee
+git push gitee master   # Gitee   
 ```
 
 ## 评论系统
 
-当前使用 **Twikoo**，后端部署信息：
-- **Twikoo 服务**：`https://ndl18120531615-twikoo.vercel.app`（Vercel 托管）
+当前使用 **Twikoo**，采用 Vercel Serverless + MongoDB Atlas + 自定义域名的架构（因 `*.vercel.app` 在国内被墙）：
+
+- **前端 JS**：`s4.zstatic.net/npm/twikoo@1.7.9/dist/twikoo.min.js`（国内 CDN）
+- **后端 API**：`https://twikoo.nidonglin.com`（Vercel 托管，绑自定义域名绕过 GFW）
+  - DNS：Cloudflare CNAME `twikoo` → `cname.vercel-dns.com`
+  - Vercel 端：Fork 自 `twikoojs/twikoo` 的 `src/server/vercel`，配置 `MONGODB_URI` 环境变量
 - **数据库**：MongoDB Atlas 免费集群 `cluster0.y6zdg1n.mongodb.net`
-- 配置文件：`src/config/commentConfig.ts`，`type: "twikoo"`
+- **配置**：`src/config/commentConfig.ts`，`type: "twikoo"`
+- **访客统计**：`src/components/comment/Twikoo.astro` 中通过 `twikoo.getVisitors()` 实现，`#twikoo_visitors` 元素在 `PostMeta.astro` 中渲染
+- **管理面板**：访问 `https://twikoo.nidonglin.com`，设置 `TWIKOO_ADMIN_PASS` 环境变量即可登录管理评论
 
 Giscus 因 `giscus.app` 在国内被墙，不可用。
 
