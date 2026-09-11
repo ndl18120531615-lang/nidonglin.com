@@ -1,6 +1,6 @@
 ---
 title: Spring AI 实战：用 DeepSeek 搭一个会查天气、能记上下文的智能客服
-published: 2026-09-10
+published: 2026-07-06
 description: 基于 Spring Boot 3.5 + Spring AI 1.0 的智能问答系统，包含 SSE 流式输出、JDBC 多轮记忆、高德地图工具调用、Elasticsearch 向量检索和会话历史管理。
 image: ./images/ai-qa-00-cover.png
 tags: [Spring AI, Spring Boot, DeepSeek, RAG, Java, 大模型]
